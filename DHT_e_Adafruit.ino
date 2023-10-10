@@ -86,7 +86,7 @@ void loop() {
   // Compute heat index in Fahrenheit (the default) FAHRENHEIT DA SAIDA
   float hifs = dhtSaida.computeHeatIndex(fs, hs);
   // Compute heat index in Celsius (isFahreheit = false) CELSIUS DA SAIDA
-  float hics = dhtSaida.computeHeatIndex(ts, hs, false); */
+  float hics = dhtSaida.computeHeatIndex(ts, hs, false); 
   
   //Impressão do sensor INICIAL/ENTRADA
   Serial.print(F("Umidade Inicial: "));
@@ -94,8 +94,7 @@ void loop() {
   Serial.print(F("%  Temperatura Inicial: "));
   Serial.print(te);
   Serial.println(F("°C "));
-  
-/*  
+   
    //Impressão do sensor FINAL/SAIDA
   Serial.print(F("Umidade Final : "));
   Serial.print(hs);
