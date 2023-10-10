@@ -139,7 +139,7 @@ void loop() {
     /*mqtt_client.publish("PedroSantos_/feeds/hs", String(hs).c_str());
     Serial.println("Publicou a umidade de saída: " + String(hs));*/
     
-    delay(30000);
+    delay(30000); // Verificar se o período de envio está dentro do limite do Adafruit.
     mqtt_client.loop();
   }
 }
