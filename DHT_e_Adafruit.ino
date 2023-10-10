@@ -31,8 +31,8 @@ const char* mqtt_broker = "io.adafruit.com";
 const int mqtt_port = 1883;
 int mqtt_timeout = 10000;
 
-const char* mqtt_usernameAdafruitIO = "PedroSantos_";
-const char* mqtt_keyAdafruitIO = "aio_MUwn40IGwZ6hPe4tMJYnU4uKVjDH";
+const char* mqtt_usernameAdafruitIO = "userid"; // userid = ID do usário do site io.adafruit.com
+const char* mqtt_keyAdafruitIO = "user_key"; // key de acesso do usuário.
 
 int valor = 0;
 
