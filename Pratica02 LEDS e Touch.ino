@@ -1,6 +1,6 @@
-#define LED_PIN1 33
+#define LED_PIN1 26
 #define LED_PIN2 25
-#define LED_PIN3 26
+#define LED_PIN3 32
 #define BLINK_INTERVAL 250
 
 
@@ -17,6 +17,9 @@ void setup() {
   pinMode(LED_PIN2,OUTPUT);
   pinMode(LED_PIN3,OUTPUT);
   delay(3000);
+  digitalWrite(LED_PIN1, LOW);
+  digitalWrite(LED_PIN2, LOW);
+  digitalWrite(LED_PIN3, LOW);
   Serial.print("Aperte para iniciar");
 }
 
@@ -24,6 +27,7 @@ void loop() {
   digitalWrite(LED_PIN1, LOW);
   digitalWrite(LED_PIN2, LOW);
   digitalWrite(LED_PIN3, LOW);
+  
   // put your main code here, to run repeatedly:
   unsigned long previousMillis = 0;
   //Serial.println(touchRead(13));
@@ -43,32 +47,25 @@ void loop() {
     digitalWrite(LED_PIN2, HIGH);
     unsigned long currentMillis = millis();
      while ((touchRead(12))>65 && (touchRead(14))>65){
-        Serial.print("Comecem!");
+        Serial.println("Comecem!");
         delay (1000);
      }
         
         if ((touchRead(12))<65){
             digitalWrite(LED_PIN3, HIGH);
+            digitalWrite(LED_PIN2, LOW);
             Serial.println(currentMillis);
+            delay(3000);
             return; 
             
         }
         
         if ((touchRead(14))<65){
             digitalWrite(LED_PIN1, HIGH);
+            digitalWrite(LED_PIN2, LOW);
             Serial.println(currentMillis);
+            delay(3000);
             return; 
         }
     }
   }
-
-  //delay(1000);
-  
-  /*if (currentMillis - previousMillis >= BLINK_INTERVAL){
-      digitalWrite(LED_PIN, !digitalRead(LED_PIN));
-      Serial.print("Tempo de processamento do ESP 32 ");
-      Serial.println(currentMillis - previousMillis);
-      previousMillis = currentMillis;
-      
-  }
-}*/
