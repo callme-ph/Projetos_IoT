@@ -32,8 +32,8 @@ const char* mqtt_broker = "io.adafruit.com";
 const int mqtt_port = 1883;
 int mqtt_timeout = 10000;
 
-const char* mqtt_usernameAdafruitIO = "PedroSantos_";
-const char* mqtt_keyAdafruitIO = "aio_ibXW71OjaVfyUUk3WV5jH0X7md7m";
+const char* mqtt_usernameAdafruitIO = "user_id";
+const char* mqtt_keyAdafruitIO = "user_key";
 
 int valor = 0;
 
@@ -71,8 +71,6 @@ void loop() {
   float hife = dhtEntrada.computeHeatIndex(fe, he);
   // Compute heat index in Celsius (isFahreheit = false) CELSIUS DA ENTRADA
   float hice = dhtEntrada.computeHeatIndex(te, he, false);
-
-// PINO DE SAÍDA NÃO CONFIGURADO
 
   // Sensor de saída leitura da temperatura final
   float hs = dhtSaida.readHumidity();
