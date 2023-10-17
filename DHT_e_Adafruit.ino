@@ -9,8 +9,9 @@
 
 #include "DHT.h"
 
-#define DHTPINE 4  
-// #define DHTPINS 2 - Segundo sensor
+#define LEDWIFI 2
+#define DHTPINE 4  // Sensor de entrada
+#define DHTPINS 15 // Sensor de saída
 
 #define DHTTYPE DHT11   // DHT 11
 
@@ -18,7 +19,7 @@
 //#define DHTTYPE DHT21   // DHT 21 (AM2301)
 
 DHT dhtEntrada(DHTPINE, DHTTYPE);
-//DHT dhtSaida(DHTPINS,DHTTYPE);
+DHT dhtSaida(DHTPINS,DHTTYPE);
 
 WiFiClient wifi_client;
 PubSubClient mqtt_client(wifi_client);
@@ -31,8 +32,8 @@ const char* mqtt_broker = "io.adafruit.com";
 const int mqtt_port = 1883;
 int mqtt_timeout = 10000;
 
-const char* mqtt_usernameAdafruitIO = "userid"; // userid = ID do usário do site io.adafruit.com
-const char* mqtt_keyAdafruitIO = "user_key"; // key de acesso do usuário.
+const char* mqtt_usernameAdafruitIO = "PedroSantos_";
+const char* mqtt_keyAdafruitIO = "aio_ibXW71OjaVfyUUk3WV5jH0X7md7m";
 
 int valor = 0;
 
@@ -46,7 +47,10 @@ void setup() {
   mqtt_client.setServer(mqtt_broker, mqtt_port);
 
   dhtEntrada.begin();
-//  dhtSaida.begin();
+  dhtSaida.begin();
+  
+  pinMode(LEDWIFI, OUTPUT);
+
 }
 
 void loop() {
@@ -59,7 +63,7 @@ void loop() {
 
   // Check if any reads failed and exit early (to try again).
   if (isnan(he) || isnan(te) || isnan(fe)) {
-    Serial.println(F("Erro ao ler o sensor DHT!"));
+    Serial.println(F("Erro ao ler o sensor DHT de entrada!"));
     return;
   }
   
@@ -70,7 +74,7 @@ void loop() {
 
 // PINO DE SAÍDA NÃO CONFIGURADO
 
-/*  // Sensor de saída leitura da temperatura final
+  // Sensor de saída leitura da temperatura final
   float hs = dhtSaida.readHumidity();
   // Read temperature as Celsius (the default)
   float ts = dhtSaida.readTemperature();
@@ -79,22 +83,23 @@ void loop() {
 
   // Check if any reads failed and exit early (to try again).
   if (isnan(hs) || isnan(ts) || isnan(fs)) {
-    Serial.println(F("Erro ao ler o sensor DHT!"));
+    Serial.println(F("Erro ao ler o sensor DHT de saída!"));
     return;
   }
 
   // Compute heat index in Fahrenheit (the default) FAHRENHEIT DA SAIDA
   float hifs = dhtSaida.computeHeatIndex(fs, hs);
   // Compute heat index in Celsius (isFahreheit = false) CELSIUS DA SAIDA
-  float hics = dhtSaida.computeHeatIndex(ts, hs, false); 
+  float hics = dhtSaida.computeHeatIndex(ts, hs, false);
   
-  //Impressão do sensor INICIAL/ENTRADA
+  /*//Impressão do sensor INICIAL/ENTRADA
   Serial.print(F("Umidade Inicial: "));
   Serial.print(he);
   Serial.print(F("%  Temperatura Inicial: "));
   Serial.print(te);
-  Serial.println(F("°C "));
-   
+  Serial.println(F("°C "));*/
+  
+/*  
    //Impressão do sensor FINAL/SAIDA
   Serial.print(F("Umidade Final : "));
   Serial.print(hs);
@@ -130,16 +135,16 @@ void loop() {
     mqtt_client.publish("PedroSantos_/feeds/temperatura-de-entrada", String(te).c_str());
     Serial.println("Publicou a temperatura de entrada: " + String(te));
     
-   /*mqtt_client.publish("PedroSantos_/feeds/ts", String(ts).c_str());
-    Serial.println("Publicou a temperatura de saída: " + String(ts));*/
+    mqtt_client.publish("PedroSantos_/feeds/ts", String(ts).c_str());
+    Serial.println("Publicou a temperatura de saída: " + String(ts));
     
     mqtt_client.publish("PedroSantos_/feeds/he", String(he).c_str());
     Serial.println("Publicou a umidade de entrada: " + String(he));
     
-    /*mqtt_client.publish("PedroSantos_/feeds/hs", String(hs).c_str());
-    Serial.println("Publicou a umidade de saída: " + String(hs));*/
+    mqtt_client.publish("PedroSantos_/feeds/hs", String(hs).c_str());
+    Serial.println("Publicou a umidade de saída: " + String(hs));
     
-    delay(30000); // Verificar se o período de envio está dentro do limite do Adafruit.
+    delay(30000);
     mqtt_client.loop();
   }
 }
@@ -157,8 +162,10 @@ void connectWiFi() {
   if (WiFi.status() != WL_CONNECTED) {
     Serial.println("Conexão com WiFi falhou!");
   } else {
+    digitalWrite(LEDWIFI, HIGH);
     Serial.print("Conectado com o IP: ");
     Serial.println(WiFi.localIP());
+    
   }
 }
 
