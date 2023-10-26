@@ -11,7 +11,8 @@
 
 #define LEDWIFI 2
 #define DHTPINE 4  // Sensor de entrada
-#define DHTPINS 15 // Sensor de saída
+#define DHTPINS 32 // Sensor de saída
+#define SOILPIN 27 // Sensor de umidade do solo
 
 #define DHTTYPE DHT11   // DHT 11
 
@@ -24,16 +25,18 @@ DHT dhtSaida(DHTPINS,DHTTYPE);
 WiFiClient wifi_client;
 PubSubClient mqtt_client(wifi_client);
 
-const char* wifi_ssid = "imd0902";
-const char* wifi_password = "imd0902iot";
+const char* wifi_ssid = "Redmi9T";
+const char* wifi_password = "pedroshow";
 int wifi_timeout = 100000;
+
+int umidade_solo, soil_analog;
 
 const char* mqtt_broker = "io.adafruit.com";
 const int mqtt_port = 1883;
 int mqtt_timeout = 10000;
 
-const char* mqtt_usernameAdafruitIO = "user_id";
-const char* mqtt_keyAdafruitIO = "user_key";
+const char* mqtt_usernameAdafruitIO = "PedroSantos_";
+const char* mqtt_keyAdafruitIO = "aio_kXMf78Vwusl7Z8h3N79GYioAIWQu";
 
 int valor = 0;
 
@@ -55,6 +58,17 @@ void setup() {
 
 void loop() {
 
+  /* CÓDIGO DO SENSOR DE UMIDADE DO SOLO. NÃO FUNCIONOU :(
+  soil_analog = analogRead(SOILPIN);
+  Serial.print("Valor lido no sensor:");
+  Serial.println(soil_analog);
+  umidade_solo = ( 100 - ( (soil_analog/4095.00) * 100 ) );
+  Serial.print("Umidade do solo lida = ");
+  Serial.print(umidade_solo);  // Print Temperature on the serial window
+  Serial.println("%");
+  delay(1000);
+  */
+
   float he = dhtEntrada.readHumidity();
   // Read temperature as Celsius (the default)
   float te = dhtEntrada.readTemperature();
@@ -71,6 +85,8 @@ void loop() {
   float hife = dhtEntrada.computeHeatIndex(fe, he);
   // Compute heat index in Celsius (isFahreheit = false) CELSIUS DA ENTRADA
   float hice = dhtEntrada.computeHeatIndex(te, he, false);
+
+
 
   // Sensor de saída leitura da temperatura final
   float hs = dhtSaida.readHumidity();
@@ -97,14 +113,15 @@ void loop() {
   Serial.print(te);
   Serial.println(F("°C "));*/
   
-/*  
-   //Impressão do sensor FINAL/SAIDA
+  /*
+  //Impressão do sensor FINAL/SAIDA
   Serial.print(F("Umidade Final : "));
   Serial.print(hs);
   Serial.print(F("%  Temperatura Final: "));
   Serial.print(ts);
   Serial.println(F("°C ")); 
-
+  */
+  
   //Calculo da variação da temperatura
   float varTempC = ts-te;
   if (varTempC < 0){
@@ -115,14 +132,15 @@ void loop() {
     varHum = varHum*-1;
       }
 
+  /*
   //Impressão da VARIAÇÃO DA UMIDADE e TEMPERATURA EM C
   Serial.print(F("Variação de Umidade: "));
   Serial.print(varHum);
   Serial.print(F("%  Variação de Temperatura: "));
   Serial.print(varTempC);
   Serial.println(F("°C "));
-  
   */
+  
       
   if (!mqtt_client.connected()) { // Se MQTT não estiver conectado
     connectMQTT();
@@ -141,8 +159,18 @@ void loop() {
     
     mqtt_client.publish("PedroSantos_/feeds/hs", String(hs).c_str());
     Serial.println("Publicou a umidade de saída: " + String(hs));
+
     
-    delay(30000);
+    mqtt_client.publish("PedroSantos_/feeds/var_u", String(varHum).c_str());
+    Serial.println("Publicou a variação de umidade: " + String(varHum));
+      
+    mqtt_client.publish("PedroSantos_/feeds/var_t", String(varTempC).c_str());
+    Serial.println("Publicou a variação de temperatura: " + String(varTempC));
+
+    /*mqtt_client.publish("PedroSantos_/feeds/soil", String(umidade_solo).c_str());
+    Serial.println("Publicou a variação de temperatura: " + String(umidade_solo));*/
+    
+    delay(60000);
     mqtt_client.loop();
   }
 }
