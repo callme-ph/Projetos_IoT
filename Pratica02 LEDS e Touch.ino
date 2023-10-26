@@ -2,8 +2,6 @@
 #define LED_PIN2 25
 #define LED_PIN3 32
 
-int ledState= LOW;
-
 unsigned long previousMillis = 0;
 void setup() {
   
