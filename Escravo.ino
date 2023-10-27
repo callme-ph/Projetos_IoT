@@ -1,9 +1,8 @@
 #include <SoftwareSerial.h>
 SoftwareSerial ArduinoMaster(10,11);
-char cmd="";
-char old_cmd;
 
 #define LED 7
+
 int estadoBotao;
 float estadoLuz;
 
@@ -13,8 +12,7 @@ void setup() {
 }
 
 void loop() {
-  old_cmd = cmd;
-
+  
   if(ArduinoMaster.available()){
     estadoBotao = ArduinoMaster.read();
     estadoLuz = ArduinoMaster.read();
@@ -26,6 +24,8 @@ void loop() {
     Serial.print("Erro ao se comunicar com o mestre.");
   }
 
+  map(estadoLuz, -- , -- , 0, 255);
+  
   if(estadoBotao){
     digitalWrite(LED, LOW);
   }else{
