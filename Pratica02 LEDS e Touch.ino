@@ -39,7 +39,7 @@ void loop() {
     delay (1000);
     digitalWrite(LED_PIN2, HIGH);
 
-    previousMillis = currentMillis;
+    previousMillis = millis();
     
     Serial.println("Comecem!");
     
