@@ -22,13 +22,14 @@ void loop() {
     Serial.println(estadoLuz);
   } else {
     Serial.print("Erro ao se comunicar com o mestre.");
+    delay(2000);
   }
 
-  map(estadoLuz, -- , -- , 0, 255);
+  LED_value = map(estadoLuz, 0, 1023, 0, 255);
   
   if(estadoBotao){
     digitalWrite(LED, LOW);
   }else{
-    digitalWrite(LED, estadoLuz);
+    digitalWrite(LED, led_value);
   }
 }
