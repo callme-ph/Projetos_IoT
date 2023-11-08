@@ -1,3 +1,7 @@
+/*
+Código faz o uso de sensores DHT11 para leitura de umidade e temperatura do ambiente e faz a transmissão dos dados coletados para o Adafruit IO por meio do protocolo MQTT
+*/
+
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <PubSubClient.h>
