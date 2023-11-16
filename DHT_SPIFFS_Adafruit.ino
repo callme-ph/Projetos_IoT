@@ -29,8 +29,8 @@ DHT dhtSaida(DHTPINS,DHTTYPE);
 WiFiClient wifi_client;
 PubSubClient mqtt_client(wifi_client);
 
-const char* wifi_ssid = "Redmi9T";
-const char* wifi_password = "pedroshow";
+const char* wifi_ssid = "wifi_ssid";
+const char* wifi_password = "wifi_password";
 int wifi_timeout = 100000;
 
 int umidade_solo, soil_analog;
@@ -39,8 +39,8 @@ const char* mqtt_broker = "io.adafruit.com";
 const int mqtt_port = 1883;
 int mqtt_timeout = 10000;
 
-const char* mqtt_usernameAdafruitIO = "PedroSantos_";
-const char* mqtt_keyAdafruitIO = "aio_nsyJ23tEQEY2Mkxwl45P4eNlN0QI";
+const char* mqtt_usernameAdafruitIO = "user";
+const char* mqtt_keyAdafruitIO = "user_key";
 
 int valor = 0;
 
@@ -52,21 +52,27 @@ String values;
 void publicarDados(String s_str){
   Serial.print("Publicando os valores na string: ");
   Serial.println(s_str);
+
+  char str_copy[256];
+  char value[256];
   
-  char value[10];
-  strcpy(value, s_str.c_str());
-  Serial.print("value: ");
-  Serial.println(value);
+  strcpy(str_copy, s_str.c_str());
   
-  return;
+  Serial.print("Vetor do tipo char com os valores da string: ");
+  Serial.println(str_copy);
   
   int cont = 0;
-  for(int i = 0; i < str.length(); i++){
-    if(str[i] != '-'){
-      value[i] += str[i];
-      Serial.print("String value: ");
+  for(int i = 0; i < s_str.length(); i++){
+    while(str_copy[i] != '-'){
+      Serial.print("str_copy[i]: ");
+      Serial.print(str_copy[i]);
+      value[i] = str_copy[i];
+      Serial.print("String value com um único dado a ser publicado: ");
       Serial.println(value);
-    }else{
+      return;
+      
+    }
+    
       switch(cont)
       {
         case 0:
