@@ -2,6 +2,8 @@
 #include <WiFiClient.h>
 #include <PubSubClient.h>
 
+#include <string>
+
 #include <Adafruit_Sensor.h>
 
 #include <DHT.h>
@@ -38,13 +40,79 @@ const int mqtt_port = 1883;
 int mqtt_timeout = 10000;
 
 const char* mqtt_usernameAdafruitIO = "PedroSantos_";
-const char* mqtt_keyAdafruitIO = "aio_eaEa78nScjzipFAC8TmFSIfANmOp";
+const char* mqtt_keyAdafruitIO = "aio_nsyJ23tEQEY2Mkxwl45P4eNlN0QI";
 
 int valor = 0;
 
 String str;
 String s;
 String values;
+
+
+void publicarDados(String s_str){
+  Serial.print("Publicando os valores na string: ");
+  Serial.println(s_str);
+  
+  char value[10];
+  strcpy(value, s_str.c_str());
+  Serial.print("value: ");
+  Serial.println(value);
+  
+  return;
+  
+  int cont = 0;
+  for(int i = 0; i < str.length(); i++){
+    if(str[i] != '-'){
+      value[i] += str[i];
+      Serial.print("String value: ");
+      Serial.println(value);
+    }else{
+      switch(cont)
+      {
+        case 0:
+          mqtt_client.publish("PedroSantos_/feeds/temperatura-de-entrada", String(value).c_str());
+          Serial.println("Publicou a temperatura de entrada: " + String(value));
+          Serial.print("Caso :");
+          Serial.println(cont);
+          cont++;
+          
+        case 1:
+          mqtt_client.publish("PedroSantos_/feeds/ts", String(value).c_str());
+          Serial.println("Publicou a temperatura de saída: " + String(value));
+          Serial.print("Caso :");
+          Serial.println(cont);
+          cont++;
+          
+
+        case 2:
+          mqtt_client.publish("PedroSantos_/feeds/he", String(value).c_str());
+          Serial.println("Publicou a umidade de entrada: " + String(value));
+          cont++;
+
+        case 3:
+          mqtt_client.publish("PedroSantos_/feeds/hs", String(value).c_str());
+          Serial.println("Publicou a umidade de saída: " + String(value));
+          cont++;
+
+        case 4:
+          mqtt_client.publish("PedroSantos_/feeds/var_u", String(value).c_str());
+          Serial.println("Publicou a variação de umidade: " + String(value));
+          cont++;
+
+        case 5:    
+          mqtt_client.publish("PedroSantos_/feeds/var_t", String(value).c_str());
+          Serial.println("Publicou a variação de temperatura: " + String(value));
+          cont++;
+
+        case 6:
+          mqtt_client.publish("PedroSantos_/feeds/soil", String(value).c_str());
+          Serial.println("Publicou a umidade do solo: " + String(value));
+          cont++;
+      }
+    }
+  }
+}
+
 
 void writeFile(String state, String path) { //escreve conteúdo em um arquivo
   File rFile = SPIFFS.open(path, "a");//  para truncar - apagar e reescrever
@@ -53,16 +121,14 @@ void writeFile(String state, String path) { //escreve conteúdo em um arquivo
     return;
   }
   else {
-    Serial.print("tamanho");
+    Serial.print("Tamanho atual do aqruivo: ");
     Serial.println(rFile.size());
     rFile.println(state);
-    Serial.print("Gravou: ");
+    Serial.print("Dados gravados: ");
     Serial.println(state);
   }
   rFile.close();
 }
-
-String clearFile();
 
 String readFile(String path) {
   Serial.println("Read file");
@@ -71,14 +137,16 @@ String readFile(String path) {
     Serial.println("Erro ao abrir arquivo!");
   }
   else {
-    Serial.print("----------Lendo arquivo ");
+    Serial.print("-- Lendo arquivo ");
     Serial.print(path);
-    Serial.println("  ---------");
+    Serial.println("  --");
     while (rFile.position() < rFile.size())
     {
-      s = rFile.readStringUntil("-");
+      s = rFile.readStringUntil('\n');
       s.trim();
+      Serial.print("String s lida pela função Readfile: ");
       Serial.println(s);
+      publicarDados(s);
     }
     rFile.close();
     return s;
@@ -126,7 +194,7 @@ void loop() {
 
   //CÓDIGO DO SENSOR DE UMIDADE DO SOLO FUNCIONOU. :)
   soil_analog = analogRead(AOUT_PIN);
-  Serial.print("Valor lido no sensor:");
+  Serial.print("Valor lido no sensor de umidade:");
   Serial.println(soil_analog);
   umidade_solo = ( 100 - ( (soil_analog/4095.00) * 100 ) );
   Serial.print("Umidade do solo lida = ");
@@ -217,21 +285,11 @@ void loop() {
       Serial.println(values);
     }
 
-    str = String(te);
-    writeFile(str, "/logsAula.txt");
-    str = String(ts);
-    writeFile(str, "/logsAula.txt");
-    str = String(he);
-    writeFile(str, "/logsAula.txt");
-    str = String(hs);
-    writeFile(str, "/logsAula.txt");
-    str = String(varHum);
-    writeFile(str, "/logsAula.txt");
-    str = String(varTempC);
-    writeFile(str, "/logsAula.txt");
-    str = String(umidade_solo);
-    writeFile(str, "/logsAula.txt");
-    str = "-";
+    //str = String(te+"-"+ts+"-"+he+"_"+hs+"-"+varHum+"-"+varTempC+"-"+umidade_solo);
+    str = String(te)+"-"+String(ts)+"-"+String(he)+"-"+String(hs)+"-"+String(varHum)+"-"+String(varTempC)+"-"+String(umidade_solo);
+    Serial.print("String in Log: ");
+    Serial.println(str);
+    
     writeFile(str, "/logsAula.txt");
 
     digitalWrite(LEDWIFI, HIGH); // LED Aceso indica que o ESP conseguiu se conectar \
