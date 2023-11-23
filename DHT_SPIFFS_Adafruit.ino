@@ -50,18 +50,25 @@ String values;
 
 
 void publicarDados(String s_str){
-  Serial.print("Publicando os valores na string: ");
+
+  Serial.print("Publicando os valores que vieram na string: ");
   Serial.println(s_str);
 
   char str_copy[256];
   char value[256];
   
-  strcpy(str_copy, s_str.c_str());
+  strcpy(str_copy, s_str.c_str()); // Copia os valores da String s_str que é do tipo const char* para str_copy que é um vetor do tipo char.
   
-  Serial.print("Vetor do tipo char com os valores da string: ");
+  Serial.print("Vetor do tipo char formado a partir dos valores recebidos da função readFile: ");
   Serial.println(str_copy);
+
+  Serial.print("tamanho da string s_str: ");
+  Serial.println(sizeof(s_str));
+  Serial.print("tamanho da string str_copy: ");
+  Serial.println(sizeof(str_copy));
   
   int cont = 0;
+  
   for(int i = 0; i < s_str.length(); i++){
     while(str_copy[i] != '-'){
       Serial.print("str_copy[i]: ");
@@ -93,26 +100,36 @@ void publicarDados(String s_str){
         case 2:
           mqtt_client.publish("PedroSantos_/feeds/he", String(value).c_str());
           Serial.println("Publicou a umidade de entrada: " + String(value));
+          Serial.print("Caso :");
+          Serial.println(cont);
           cont++;
 
         case 3:
           mqtt_client.publish("PedroSantos_/feeds/hs", String(value).c_str());
           Serial.println("Publicou a umidade de saída: " + String(value));
+          Serial.print("Caso :");
+          Serial.println(cont);
           cont++;
 
         case 4:
           mqtt_client.publish("PedroSantos_/feeds/var_u", String(value).c_str());
           Serial.println("Publicou a variação de umidade: " + String(value));
+          Serial.print("Caso :");
+          Serial.println(cont);
           cont++;
 
         case 5:    
           mqtt_client.publish("PedroSantos_/feeds/var_t", String(value).c_str());
           Serial.println("Publicou a variação de temperatura: " + String(value));
+          Serial.print("Caso :");
+          Serial.println(cont);
           cont++;
 
         case 6:
           mqtt_client.publish("PedroSantos_/feeds/soil", String(value).c_str());
           Serial.println("Publicou a umidade do solo: " + String(value));
+          Serial.print("Caso :");
+          Serial.println(cont);
           cont++;
       }
     }
@@ -180,7 +197,7 @@ void connectMQTT();
 void setup() {
   Serial.begin(115200);
 
-  //formatFile();
+  formatFile();
   openFS(); 
   
   WiFi.mode(WIFI_STA); //"station mode": permite o ESP32 ser um cliente da rede WiFi
