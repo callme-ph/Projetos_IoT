@@ -46,6 +46,8 @@ int main()
         cout << "value sprintf: " << value << endl;
         i = pos+1;
 
+        // A partir dos valores na variável resultado, fazer o switch para cada valor ir para um case específico \
+        // a partir de cada case será calculado as médias 
         float result = atof(value);
         cout << "result: " << result << endl;;
 
