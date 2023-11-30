@@ -29,8 +29,8 @@ DHT dhtSaida(DHTPINS, DHTTYPE);
 WiFiClient wifi_client;
 PubSubClient mqtt_client(wifi_client);
 
-const char* wifi_ssid = "Redmi9T";
-const char* wifi_password = "pedroshow";
+const char* wifi_ssid = "";
+const char* wifi_password = "";
 int wifi_timeout = 100000;
 
 int umidade_solo, soil_analog;
@@ -39,8 +39,8 @@ const char* mqtt_broker = "io.adafruit.com";
 const int mqtt_port = 1883;
 int mqtt_timeout = 10000;
 
-const char* mqtt_usernameAdafruitIO = "PedroSantos_";
-const char* mqtt_keyAdafruitIO = "aio_bfsd75VHIsP0xlTeQEegQo1O2aHq";
+const char* mqtt_usernameAdafruitIO = "";
+const char* mqtt_keyAdafruitIO = "";
 
 int valor = 0;
 
